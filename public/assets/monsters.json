@@ -1,0 +1,57 @@
+[
+    {
+        "type": "alien",
+        "sprite": "alien",
+        "x": 100,
+        "y": 100,
+        "sizeX": 64,
+        "sizeY": 96,
+        "health": 1,
+        "attackPeriod": 1500,
+        "attackStyle": "straight"
+    },
+    {
+        "type": "alien",
+        "sprite": "alien",
+        "x": 200,
+        "y": 200,
+        "sizeX": 64,
+        "sizeY": 96,
+        "health": 1,
+        "attackPeriod": 1500,
+        "attackStyle": "straight"
+    },
+    {
+        "type": "robot",
+        "sprite": "robot",
+        "x": 200,
+        "y": 100,
+        "sizeX": 64,
+        "sizeY": 96,
+        "health": 1,
+        "attackPeriod": 2000,
+        "attackStyle": "zigzag"
+    },
+    {
+        "type": "robot",
+        "sprite": "robot",
+        "x": 300,
+        "y": 200,
+        "sizeX": 64,
+        "sizeY": 96,
+        "health": 1,
+        "attackPeriod": 2000,
+        "attackStyle": "zigzag"
+    },
+    {
+        "type": "boss",
+        "sprite": "boss",
+        "x": 300,
+        "y": 100,
+        "sizeX": 100,
+        "sizeY": 140,
+        "health": 10,
+        "attackPeriod": 1000,
+        "attackStyle": "spread"
+    }
+]

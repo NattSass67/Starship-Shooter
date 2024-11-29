@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Home</title>
+    <link rel="stylesheet" href="./home.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Welcome to Starship Adventure!</h1>
+            <p>Battle monsters, dodge bullets, and climb the leaderboard.</p>
+            <div class="buttons">
+                <button id="start-game">Start Game</button>
+                <button id="view-leaderboard">View Leaderboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('start-game').addEventListener('click', () => {
+            window.location.href = '/game'; // Redirect to the game page
+        });
+
+        document.getElementById('view-leaderboard').addEventListener('click', () => {
+            window.location.href = '/leaderboard'; // Redirect to the leaderboard page
+        });
+    </script>
+</body>
+</html>

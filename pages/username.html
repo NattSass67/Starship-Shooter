@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Username</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div id="username-container">
+        <h1>Welcome to Starship Shooter!!</h1>
+        <h1>Enter Your Username</h1>
+        <form id="username-form">
+            <input type="text" id="username" placeholder="Your Username" required />
+            <button type="submit">Submit</button>
+        </form>
+        <p id="error-message"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('username-form');
+        const errorMessage = document.getElementById('error-message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+
+            try {
+                const response = await fetch('/api/set-username', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username }),
+                });
+
+                if (!response.ok) {
+                    const { error } = await response.json();
+                    errorMessage.textContent = error;
+                } else {
+                    window.location.href = '/'; // Redirect to the game
+                }
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+            }
+        });
+    </script>
+</body>
+
+</html>
