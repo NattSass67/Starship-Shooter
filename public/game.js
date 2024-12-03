@@ -86,9 +86,10 @@ async function create() {
     // Load monster data from JSON
     let monsterData;
     try {
-        const response = await fetch('assets/monsters.json');
+        const response = await fetch(`/api/map/${stage+1}`);
         let data = await response.json();
-        monsterData = data[stage]
+        console.log(data)
+        monsterData = data.entities
     } catch (error) {
         console.log('Error loading monster JSON:', error);
         return;
@@ -162,6 +163,26 @@ async function create() {
         .setVisible(false)
         .setScale(0.5);
     restartButton.on('pointerdown', () => restartGame.call(this));
+
+    window.addEventListener('resize', resizeGame);
+    resizeGame(); // Call resizeGame initially    
+}
+
+function resizeGame() {
+    const canvas = document.querySelector('canvas');
+    if (canvas) {
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const gameRatio = config.width / config.height;
+
+        if (windowWidth / windowHeight < gameRatio) {
+            canvas.style.width = `${windowWidth}px`;
+            canvas.style.height = `${windowWidth / gameRatio}px`;
+        } else {
+            canvas.style.width = `${windowHeight * gameRatio}px`;
+            canvas.style.height = `${windowHeight}px`;
+        }
+    }
 }
 
 // Function that runs every frame (~60 times per second by default)
@@ -339,6 +360,7 @@ function endGame() {
 
 // Function to restart the game
 function restartGame() {
+    stage=0
     gameOver = false;
     playerHealth = 10;
     score = 0;
@@ -348,6 +370,6 @@ function restartGame() {
 
 function nextStageGame() {
     gameOver = false;
-    playerHealth += 10;
+    playerHealth += 8;
     this.scene.restart(); // Restart the scene
 }

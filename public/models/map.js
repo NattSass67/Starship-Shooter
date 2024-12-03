@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const MapSchema = new mongoose.Schema({
-    mapName: { type: String, required: true },
+    mapName: { type: Number, required: true },
     entities: [
         {
             type: { type: String, required: true },
