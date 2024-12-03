@@ -36,6 +36,7 @@ let healthText; // Display for player's health
 let restartButton;
 let countdownText; // For displaying the countdown
 let isMobileDevice;
+let pauseButton, pauseMenu, resumeButton, mainMenuButton;
 
 // Function to load game assets (runs before the game starts)
 function preload() {
@@ -57,6 +58,20 @@ async function create() {
 
     // Add and configure the background
     this.add.image(400, 400, 'background').setDisplaySize(800, 800);
+
+    pauseButton = document.getElementById('pause-button');
+    pauseMenu = document.getElementById('pause-menu');
+    resumeButton = document.getElementById('resume-button');
+    mainMenuButton = document.getElementById('main-menu-button');
+
+    // Pause button functionality
+    pauseButton.addEventListener('click', handlePause);
+
+    // Resume button functionality
+    resumeButton.addEventListener('click', handleResume);
+
+    // Main menu button functionality
+    mainMenuButton.addEventListener('click', handleMainMenu);
 
     // Add and configure the starship
     starship = this.physics.add
@@ -262,6 +277,27 @@ function monsterAttack(monster) {
     }
 }
 
+function handlePause() {
+    if (game.scene.isPaused('default')) {
+        game.scene.resume('default');
+        pauseMenu.classList.add('hidden'); // Hide pause menu
+    } else {
+        game.scene.pause('default');
+        pauseMenu.classList.remove('hidden'); // Show pause menu
+    }
+}
+
+function handleResume() {
+    game.scene.resume('default');
+    pauseMenu.classList.add('hidden'); // Hide pause menu
+    pauseButton.textContent = 'Pause'; // Reset pause button text
+}
+
+function handleMainMenu() {
+    // Navigate to main menu (reload or redirect)
+    window.location.href = '/'; // Redirect to the main menu page
+}
+
 // Function to end the game
 function endGame() {
     gameOver = true; // Mark the game as over
@@ -271,6 +307,26 @@ function endGame() {
     });
     restartButton.setVisible(true); // Show restart button
     starship.setTint(0xff0000); // Tint the starship red
+
+    fetch('/api/score', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ score }) // Send the score in the request body
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Score saved successfully');
+        } else {
+            return response.json().then(data => {
+                console.error('Error saving score:', data.error);
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 // Function to restart the game

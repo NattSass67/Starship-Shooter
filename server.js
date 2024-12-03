@@ -63,8 +63,11 @@ app.post('/api/score', async (req, res) => {
             return res.status(400).json({ error: 'User not found' });
         }
 
-        user.score += score;
-        await user.save();
+        // Update only if the new score is higher
+        if (score > user.score) {
+            user.score = score;
+            await user.save();
+        }
 
         res.json({ message: 'Score updated', leaderboard: user });
     } catch (err) {
@@ -72,6 +75,7 @@ app.post('/api/score', async (req, res) => {
         res.status(500).json({ error: 'Error updating score' });
     }
 });
+
 
 
 // API to get the leaderboard
@@ -105,6 +109,10 @@ app.get('/game', (req, res) => {
     } else {
         res.sendFile(path.join(__dirname, 'pages/game.html')); // Serve the game
     }
+});
+
+app.get('/leaderboard', (req, res) => {
+        res.sendFile(path.join(__dirname, 'pages/leaderboard.html')); // Serve the game
 });
 
 app.listen(PORT, () => {
