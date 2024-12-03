@@ -37,6 +37,7 @@ let restartButton;
 let countdownText; // For displaying the countdown
 let isMobileDevice;
 let pauseButton, pauseMenu, resumeButton, mainMenuButton;
+let stage = 0;
 
 // Function to load game assets (runs before the game starts)
 function preload() {
@@ -86,7 +87,8 @@ async function create() {
     let monsterData;
     try {
         const response = await fetch('assets/monsters.json');
-        monsterData = await response.json();
+        let data = await response.json();
+        monsterData = data[stage]
     } catch (error) {
         console.log('Error loading monster JSON:', error);
         return;
@@ -116,7 +118,7 @@ async function create() {
     monsterBullets = this.physics.add.group();
 
     // Add score display
-    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#fff' });
+    scoreText = this.add.text(16, 16, `Score: ${score}`, { fontSize: '32px', fill: '#fff' });
 
     // Add health display
     healthText = this.add.text(16, 50, 'Health: ' + playerHealth, { fontSize: '32px', fill: '#fff' });
@@ -194,16 +196,22 @@ function destroyMonster(bullet, monster) {
 
     // Check if all monsters are destroyed
     if (monsters.countActive(true) === 0) {
-        startCountdown.call(this);
+        if (stage == 9) {
+            endGame.call(this);
+        }
+        else {
+            startCountdown.call(this);
+        }
     }
 }
 
 // Function to start the countdown
 function startCountdown() {
     let countdown = 3; // Countdown starts from 3
+    stage++;
 
     // Display the countdown text
-    countdownText = this.add.text(config.width / 2, config.height / 2, `Restarting in ${countdown}`, {
+    countdownText = this.add.text(config.width / 2, config.height / 2, `Stage ${stage+1} start in ${countdown}`, {
         fontSize: '48px',
         fill: '#fff',
     }).setOrigin(0.5);
@@ -214,10 +222,10 @@ function startCountdown() {
         callback: () => {
             countdown -= 1; // Decrease countdown
             if (countdown > 0) {
-                countdownText.setText(`Restarting in ${countdown}`);
+                countdownText.setText(`Stage ${stage+1} start in ${countdown}`);
             } else {
                 timer.remove(); // Stop the timer
-                restartGame.call(this); // Restart the game
+                nextStageGame.call(this); // next stage the game
             }
         },
         loop: true,
@@ -315,18 +323,18 @@ function endGame() {
         },
         body: JSON.stringify({ score }) // Send the score in the request body
     })
-    .then(response => {
-        if (response.ok) {
-            console.log('Score saved successfully');
-        } else {
-            return response.json().then(data => {
-                console.error('Error saving score:', data.error);
-            });
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+        .then(response => {
+            if (response.ok) {
+                console.log('Score saved successfully');
+            } else {
+                return response.json().then(data => {
+                    console.error('Error saving score:', data.error);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 // Function to restart the game
@@ -334,5 +342,12 @@ function restartGame() {
     gameOver = false;
     playerHealth = 10;
     score = 0;
+    this.scene.restart(); // Restart the scene
+}
+
+
+function nextStageGame() {
+    gameOver = false;
+    playerHealth += 10;
     this.scene.restart(); // Restart the scene
 }
