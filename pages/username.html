@@ -15,7 +15,9 @@
         <form id="username-form">
             <input type="text" id="username" placeholder="Your Username" required />
             <button type="submit">Submit</button>
+            <button id="view-leaderboard">View Leaderboard</button>
         </form>
+        
         <p id="error-message"></p>
     </div>
 
@@ -45,6 +47,10 @@
                 errorMessage.textContent = 'An error occurred. Please try again.';
             }
         });
+        document.getElementById('view-leaderboard').addEventListener('click', () => {
+            window.location.href = '/leaderboard'; // Redirect to the leaderboard page
+        });
+        
     </script>
 </body>
 
