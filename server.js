@@ -1,3 +1,4 @@
+const Leaderboard = require('./public/leaderboard');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -23,48 +24,70 @@ app.use((req, res, next) => {
 });
 
 // API to set username and create a user cookie
-app.post('/api/set-username', (req, res) => {
+app.post('/api/set-username', async (req, res) => {
     const { username } = req.body;
 
     if (!username || username.trim() === '') {
         return res.status(400).json({ error: 'Username is required' });
     }
 
-    // Generate a unique userId and set it as a cookie
-    const userId = crypto.randomUUID();
-    res.cookie('userId', userId, { httpOnly: true });
+    try {
+        // Create the user in the database
+        const user = await Leaderboard.create({ username });
+        const userId = user._id; // Use MongoDB's generated ID
 
-    // Initialize the user in the leaderboard
-    leaderboard[userId] = { username, score: 0 };
+        // Set the ID in the user's cookie
+        res.cookie('userId', userId.toString(), { httpOnly: true });
 
-    res.json({ message: 'Username set successfully', userId });
+        res.json({ message: 'Username set successfully', userId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error creating user' });
+    }
 });
 
+
 // API to update the user's score
-app.post('/api/score', (req, res) => {
+app.post('/api/score', async (req, res) => {
     const { score } = req.body;
-    const userId = req.userId;
+    const userId = req.cookies.userId;
 
     if (!userId) {
         return res.status(400).json({ error: 'User not identified' });
     }
 
-    if (!leaderboard[userId]) {
-        return res.status(400).json({ error: 'User not found' });
+    try {
+        const user = await Leaderboard.findById(userId);
+
+        if (!user) {
+            return res.status(400).json({ error: 'User not found' });
+        }
+
+        user.score += score;
+        await user.save();
+
+        res.json({ message: 'Score updated', leaderboard: user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error updating score' });
     }
-
-    leaderboard[userId].score += score;
-
-    res.json({ message: 'Score updated', leaderboard });
 });
+
 
 // API to get the leaderboard
-app.get('/api/leaderboard', (req, res) => {
-    const sortedLeaderboard = Object.values(leaderboard)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 10); // Return the top 10 players
-    res.json(sortedLeaderboard);
+app.get('/api/leaderboard', async (req, res) => {
+    try {
+        const topPlayers = await Leaderboard.find()
+            .sort({ score: -1 })
+            .limit(10);
+
+        res.json(topPlayers);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error fetching leaderboard' });
+    }
 });
+
 
 // Serve the main game or username form depending on the cookie
 app.get('/', (req, res) => {
