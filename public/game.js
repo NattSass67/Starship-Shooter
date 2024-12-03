@@ -308,7 +308,7 @@ function endGame() {
     restartButton.setVisible(true); // Show restart button
     starship.setTint(0xff0000); // Tint the starship red
 
-    fetch('/api/score', {
+    fetch('/api/user/score', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
