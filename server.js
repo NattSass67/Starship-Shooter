@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
-const Leaderboard = require('./public/models/leaderboard.js');
 const leaderboard = require('./public/models/leaderboard.js');
 
 const app = express();
@@ -17,8 +16,15 @@ app.use(async (req, res, next) => {
     if (!req.cookies.userId) {
         req.needsUsername = true; // Flag for requiring username
     } else {
-        
-        req.userId = req.cookies.userId; // Attach the userId from the cookie
+        const user = await leaderboard.findById(req.cookies.userId);
+        if (!user) {
+            req.needsUsername = true;
+        }
+        else{
+            req.needsUsername = false;
+            req.userId = req.cookies.userId;
+        }
+        // Attach the userId from the cookie
     }
     next();
 });
