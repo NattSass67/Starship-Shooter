@@ -370,6 +370,6 @@ function restartGame() {
 
 function nextStageGame() {
     gameOver = false;
-    playerHealth += 8;
+    playerHealth += 6;
     this.scene.restart(); // Restart the scene
 }
