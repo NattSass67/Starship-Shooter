@@ -17,16 +17,8 @@ app.use(async (req, res, next) => {
     if (!req.cookies.userId) {
         req.needsUsername = true; // Flag for requiring username
     } else {
-        const user = await leaderboard.findById(req.cookies.userId);
-
-        if (!user) {
-            req.needsUsername = true; 
-        }
-        else{
-            req.needsUsername = false;
-            req.userId = req.cookies.userId; 
-        }
-       // req.userId = req.cookies.userId; // Attach the userId from the cookie
+        
+        req.userId = req.cookies.userId; // Attach the userId from the cookie
     }
     next();
 });
