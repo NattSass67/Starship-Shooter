@@ -23,6 +23,7 @@ app.use(async (req, res, next) => {
             req.needsUsername = true; 
         }
         else{
+            req.needsUsername = false;
             req.userId = req.cookies.userId; 
         }
        // req.userId = req.cookies.userId; // Attach the userId from the cookie
