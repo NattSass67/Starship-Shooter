@@ -202,3 +202,22 @@ tr:nth-child(even) td {
 #back-to-game:hover {
     background-color: #005122;
 }
+
+
+#leaderboard tbody {
+    display: block;  /* Allows setting height and overflow properties */
+    max-height: 300px; /* Set this to whatever maximum height you want */
+    overflow-y: auto;  /* Enables vertical scroll */
+    overflow-x: hidden; /* Hides horizontal scroll */
+}
+#leaderboard th, #leaderboard td {
+    min-width: 120px; /* Ensures that the cells have a minimum width */
+}
+#leaderboard thead, #leaderboard tbody tr {
+    display: table;
+    width: 100%; /* This makes the table layout work */
+    table-layout: fixed; /* Makes columns of equal width */
+}
+#leaderboard {
+    width: 100%;
+}
